@@ -3,7 +3,7 @@ import cors from 'cors';
 import routes from './routes';
 
 const app = express();
-const port = 8081;
+const port = process.env.PORT || 8081;
 
 app.use(express.json(), cors(), routes);
 
