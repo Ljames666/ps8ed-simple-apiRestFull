@@ -76,7 +76,7 @@ routes.post('/task', (req: Request, res: Response) => {
     taskList.push(newTask);
     return res.status(200).send({ type: 'success', message: 'Tarefa cadastrada com sucesso!' });
 });
-
+// todas as tasks
 routes.get('/task', (req: Request, res: Response) => {
     if (!taskList.length) {
         return res.status(404).send({ message: 'Not Found' });
@@ -84,6 +84,7 @@ routes.get('/task', (req: Request, res: Response) => {
     return res.status(200).json(taskList);
 });
 
+// tarefas do usuario logado
 routes.get('/task/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
@@ -94,6 +95,36 @@ routes.get('/task/:id', (req: Request, res: Response) => {
     }
 
     return res.status(200).json(filterTasks);
+});
+
+routes.put('/task/:taskId', (req: Request, res: Response) => {
+    const { taskId } = req.params;
+    const { title, description } = req.body;
+
+    const achou = taskList.findIndex((task) => task.id === taskId);
+
+    if (achou < 0) {
+        return res.status(404).send({ message: 'task not Found' });
+    }
+
+    taskList[achou].title = title ? title : taskList[achou].title;
+    taskList[achou].description = description ? description : taskList[achou].description;
+    taskList[achou].updateDate = new Date();
+
+    return res
+        .status(200)
+        .send({ modifiedTask: taskList[achou], message: 'Task successfully modified!' });
+});
+
+routes.delete('/task/:taskId', (req: Request, res: Response) => {
+    const { taskId } = req.params;
+    const find = taskList.findIndex((task) => task.id === taskId);
+    if (find < 0) {
+        return res.status(404).send({ message: 'task not Found' });
+    }
+    taskList.splice(find, 1);
+
+    return res.status(200).send({ message: `Delete successfully ,task ${taskList[find].title}!` });
 });
 
 export default routes;
